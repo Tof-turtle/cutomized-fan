@@ -1,5 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import type { ChangeEvent } from 'react';
 import { Upload, FileImage, Save, FolderOpen } from 'lucide-react';
+
+type ImageMap = Record<string, string>;
+
+interface OverlaySetting {
+  scale: number;
+  x: number;
+  y: number;
+}
+
+type OverlaySettingsMap = Record<string, OverlaySetting>;
+type BackgroundColorMap = Record<string, string>;
 
 export default function FanConfigurator() {
   const sizes = [
@@ -10,73 +22,74 @@ export default function FanConfigurator() {
     '6.5-35',
     '6.5-25'
   ];
-  
+
   const colors = ['白 (White)', '黒 (Black)', '唐木 (Karaki)'];
-  
-  const [selectedSize, setSelectedSize] = useState(sizes[0]);
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
-  const [baseImages, setBaseImages] = useState({});
-  const [frontOverlayImages, setFrontOverlayImages] = useState({});
-  const [backOverlayImages, setBackOverlayImages] = useState({});
-  const [frontOverlaySettings, setFrontOverlaySettings] = useState({});
-  const [backOverlaySettings, setBackOverlaySettings] = useState({});
-  const [frontBackgroundColors, setFrontBackgroundColors] = useState({});
-  const [backBackgroundColors, setBackBackgroundColors] = useState({});
-  const [saveMessage, setSaveMessage] = useState('');
+
+  const [selectedSize, setSelectedSize] = useState<string>(sizes[0]);
+  const [selectedColor, setSelectedColor] = useState<string>(colors[0]);
+  const [baseImages, setBaseImages] = useState<ImageMap>({});
+  const [frontOverlayImages, setFrontOverlayImages] = useState<ImageMap>({});
+  const [backOverlayImages, setBackOverlayImages] = useState<ImageMap>({});
+  const [frontOverlaySettings, setFrontOverlaySettings] = useState<OverlaySettingsMap>({});
+  const [backOverlaySettings, setBackOverlaySettings] = useState<OverlaySettingsMap>({});
+  const [frontBackgroundColors, setFrontBackgroundColors] = useState<BackgroundColorMap>({});
+  const [backBackgroundColors, setBackBackgroundColors] = useState<BackgroundColorMap>({});
+  const [saveMessage, setSaveMessage] = useState<string>('');
 
   useEffect(() => {
     loadData();
   }, []);
 
-  const loadData = async () => {
+  const loadData = () => {
     try {
-      const baseResult = await window.storage.get('fan-base-images');
-      const frontOverlayResult = await window.storage.get('fan-front-overlay-images');
-      const backOverlayResult = await window.storage.get('fan-back-overlay-images');
-      const frontSettingsResult = await window.storage.get('fan-front-overlay-settings');
-      const backSettingsResult = await window.storage.get('fan-back-overlay-settings');
-      const frontBgResult = await window.storage.get('fan-front-background-colors');
-      const backBgResult = await window.storage.get('fan-back-background-colors');
-      
-      if (baseResult && baseResult.value) {
-        setBaseImages(JSON.parse(baseResult.value));
+      const baseResult = localStorage.getItem('fan-base-images');
+      const frontOverlayResult = localStorage.getItem('fan-front-overlay-images');
+      const backOverlayResult = localStorage.getItem('fan-back-overlay-images');
+      const frontSettingsResult = localStorage.getItem('fan-front-overlay-settings');
+      const backSettingsResult = localStorage.getItem('fan-back-overlay-settings');
+      const frontBgResult = localStorage.getItem('fan-front-background-colors');
+      const backBgResult = localStorage.getItem('fan-back-background-colors');
+
+      if (baseResult) {
+        setBaseImages(JSON.parse(baseResult));
       }
-      if (frontOverlayResult && frontOverlayResult.value) {
-        setFrontOverlayImages(JSON.parse(frontOverlayResult.value));
+      if (frontOverlayResult) {
+        setFrontOverlayImages(JSON.parse(frontOverlayResult));
       }
-      if (backOverlayResult && backOverlayResult.value) {
-        setBackOverlayImages(JSON.parse(backOverlayResult.value));
+      if (backOverlayResult) {
+        setBackOverlayImages(JSON.parse(backOverlayResult));
       }
-      if (frontSettingsResult && frontSettingsResult.value) {
-        setFrontOverlaySettings(JSON.parse(frontSettingsResult.value));
+      if (frontSettingsResult) {
+        setFrontOverlaySettings(JSON.parse(frontSettingsResult));
       }
-      if (backSettingsResult && backSettingsResult.value) {
-        setBackOverlaySettings(JSON.parse(backSettingsResult.value));
+      if (backSettingsResult) {
+        setBackOverlaySettings(JSON.parse(backSettingsResult));
       }
-      if (frontBgResult && frontBgResult.value) {
-        setFrontBackgroundColors(JSON.parse(frontBgResult.value));
+      if (frontBgResult) {
+        setFrontBackgroundColors(JSON.parse(frontBgResult));
       }
-      if (backBgResult && backBgResult.value) {
-        setBackBackgroundColors(JSON.parse(backBgResult.value));
+      if (backBgResult) {
+        setBackBackgroundColors(JSON.parse(backBgResult));
       }
     } catch (error) {
-      console.log('データの読み込み:', error);
+      console.log('データの読み込みエラー:', error);
     }
   };
 
-  const saveData = async () => {
+  const saveData = () => {
     try {
-      await window.storage.set('fan-base-images', JSON.stringify(baseImages));
-      await window.storage.set('fan-front-overlay-images', JSON.stringify(frontOverlayImages));
-      await window.storage.set('fan-back-overlay-images', JSON.stringify(backOverlayImages));
-      await window.storage.set('fan-front-overlay-settings', JSON.stringify(frontOverlaySettings));
-      await window.storage.set('fan-back-overlay-settings', JSON.stringify(backOverlaySettings));
-      await window.storage.set('fan-front-background-colors', JSON.stringify(frontBackgroundColors));
-      await window.storage.set('fan-back-background-colors', JSON.stringify(backBackgroundColors));
-      
+      localStorage.setItem('fan-base-images', JSON.stringify(baseImages));
+      localStorage.setItem('fan-front-overlay-images', JSON.stringify(frontOverlayImages));
+      localStorage.setItem('fan-back-overlay-images', JSON.stringify(backOverlayImages));
+      localStorage.setItem('fan-front-overlay-settings', JSON.stringify(frontOverlaySettings));
+      localStorage.setItem('fan-back-overlay-settings', JSON.stringify(backOverlaySettings));
+      localStorage.setItem('fan-front-background-colors', JSON.stringify(frontBackgroundColors));
+      localStorage.setItem('fan-back-background-colors', JSON.stringify(backBackgroundColors));
+
       setSaveMessage('Saved / 保存しました');
       setTimeout(() => setSaveMessage(''), 3000);
     } catch (error) {
+      console.error('保存エラー:', error);
       setSaveMessage('Save failed / 保存に失敗しました');
       setTimeout(() => setSaveMessage(''), 3000);
     }
@@ -84,27 +97,27 @@ export default function FanConfigurator() {
 
   const getCurrentKey = () => `${selectedSize}_${selectedColor}`;
 
-  const getFrontSettings = () => {
+  const getFrontSettings = (): OverlaySetting => {
     const key = getCurrentKey();
     return frontOverlaySettings[key] || { scale: 60, x: 50, y: 50 };
   };
 
-  const getBackSettings = () => {
+  const getBackSettings = (): OverlaySetting => {
     const key = getCurrentKey();
     return backOverlaySettings[key] || { scale: 60, x: 50, y: 50 };
   };
 
-  const getFrontBackgroundColor = () => {
+  const getFrontBackgroundColor = (): string => {
     const key = getCurrentKey();
     return frontBackgroundColors[key] || '#ffffff';
   };
 
-  const getBackBackgroundColor = () => {
+  const getBackBackgroundColor = (): string => {
     const key = getCurrentKey();
     return backBackgroundColors[key] || '#ffffff';
   };
 
-  const setFrontBackgroundColor = (color) => {
+  const setFrontBackgroundColor = (color: string) => {
     const key = getCurrentKey();
     setFrontBackgroundColors(prev => ({
       ...prev,
@@ -112,7 +125,7 @@ export default function FanConfigurator() {
     }));
   };
 
-  const setBackBackgroundColor = (color) => {
+  const setBackBackgroundColor = (color: string) => {
     const key = getCurrentKey();
     setBackBackgroundColors(prev => ({
       ...prev,
@@ -120,65 +133,82 @@ export default function FanConfigurator() {
     }));
   };
 
-  const updateFrontOverlaySetting = (property, value) => {
+  const updateFrontOverlaySetting = (
+    property: keyof OverlaySetting,
+    value: number
+  ) => {
     const key = getCurrentKey();
+    const current = getFrontSettings();
     setFrontOverlaySettings(prev => ({
       ...prev,
       [key]: {
-        ...getFrontSettings(),
+        ...current,
         [property]: value
       }
     }));
   };
 
-  const updateBackOverlaySetting = (property, value) => {
+  const updateBackOverlaySetting = (
+    property: keyof OverlaySetting,
+    value: number
+  ) => {
     const key = getCurrentKey();
+    const current = getBackSettings();
     setBackOverlaySettings(prev => ({
       ...prev,
       [key]: {
-        ...getBackSettings(),
+        ...current,
         [property]: value
       }
     }));
   };
 
-  const handleBaseImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleBaseImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setBaseImages(prev => ({
-          ...prev,
-          [getCurrentKey()]: event.target.result
-        }));
+      reader.onload = event => {
+        const result = event.target?.result;
+        if (typeof result === 'string') {
+          setBaseImages(prev => ({
+            ...prev,
+            [getCurrentKey()]: result
+          }));
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleFrontOverlayImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleFrontOverlayImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setFrontOverlayImages(prev => ({
-          ...prev,
-          [getCurrentKey()]: event.target.result
-        }));
+      reader.onload = event => {
+        const result = event.target?.result;
+        if (typeof result === 'string') {
+          setFrontOverlayImages(prev => ({
+            ...prev,
+            [getCurrentKey()]: result
+          }));
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleBackOverlayImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleBackOverlayImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setBackOverlayImages(prev => ({
-          ...prev,
-          [getCurrentKey()]: event.target.result
-        }));
+      reader.onload = event => {
+        const result = event.target?.result;
+        if (typeof result === 'string') {
+          setBackOverlayImages(prev => ({
+            ...prev,
+            [getCurrentKey()]: result
+          }));
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -204,41 +234,47 @@ export default function FanConfigurator() {
     fontFamily: "'Yu Gothic', '游ゴシック', YuGothic, 'Hiragino Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
     color: '#000000',
     padding: '40px 20px'
-  };
+  } as const;
 
   const wrapperStyle = {
     maxWidth: '210mm',
     margin: '0 auto'
-  };
+  } as const;
 
   return (
     <div style={containerStyle}>
       <div style={wrapperStyle}>
-        <h1 style={{
-          fontSize: '24px',
-          fontWeight: '600',
-          marginBottom: '32px',
-          textAlign: 'center',
-          letterSpacing: '0.05em'
-        }}>
+        <h1
+          style={{
+            fontSize: '24px',
+            fontWeight: '600',
+            marginBottom: '32px',
+            textAlign: 'center',
+            letterSpacing: '0.05em'
+          }}
+        >
           Customized Fan
         </h1>
-        
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 2fr',
-          gap: '32px',
-          marginBottom: '32px'
-        }}>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 2fr',
+            gap: '32px',
+            marginBottom: '32px'
+          }}
+        >
           <div style={{ backgroundColor: '#f5f5f5', padding: '24px' }}>
             <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '600',
-                marginBottom: '12px',
-                letterSpacing: '0.05em'
-              }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  letterSpacing: '0.05em'
+                }}
+              >
                 Size / サイズ
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -263,13 +299,15 @@ export default function FanConfigurator() {
             </div>
 
             <div style={{ marginBottom: '24px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '600',
-                marginBottom: '12px',
-                letterSpacing: '0.05em'
-              }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  letterSpacing: '0.05em'
+                }}
+              >
                 Rib Color / 骨の色
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
@@ -294,13 +332,15 @@ export default function FanConfigurator() {
             </div>
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{
-                display: 'block',
-                fontSize: '14px',
-                fontWeight: '600',
-                marginBottom: '12px',
-                letterSpacing: '0.05em'
-              }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '12px',
+                  letterSpacing: '0.05em'
+                }}
+              >
                 Base Image (Front & Back) / ベース画像（表裏共通）
               </label>
               <input
@@ -329,13 +369,15 @@ export default function FanConfigurator() {
               </label>
             </div>
 
-            <div style={{
-              display: 'flex',
-              gap: '8px',
-              marginTop: '24px',
-              paddingTop: '24px',
-              borderTop: '1px solid #dddddd'
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+                marginTop: '24px',
+                paddingTop: '24px',
+                borderTop: '1px solid #dddddd'
+              }}
+            >
               <button
                 onClick={saveData}
                 style={{
@@ -377,30 +419,34 @@ export default function FanConfigurator() {
                 Load / 読込
               </button>
             </div>
-            
+
             {saveMessage && (
-              <div style={{
-                textAlign: 'center',
-                padding: '8px',
-                marginTop: '12px',
-                backgroundColor: '#ffffff',
-                fontSize: '12px'
-              }}>
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '8px',
+                  marginTop: '12px',
+                  backgroundColor: '#ffffff',
+                  fontSize: '12px'
+                }}
+              >
                 {saveMessage}
               </div>
             )}
           </div>
 
           <div style={{ backgroundColor: '#f5f5f5', padding: '24px' }}>
-            <h2 style={{
-              fontSize: '16px',
-              fontWeight: '600',
-              marginBottom: '16px',
-              letterSpacing: '0.05em'
-            }}>
+            <h2
+              style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                marginBottom: '16px',
+                letterSpacing: '0.05em'
+              }}
+            >
               Preview / プレビュー
             </h2>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               {/* Front Preview */}
               <div>
@@ -409,20 +455,24 @@ export default function FanConfigurator() {
                 </h3>
 
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    marginBottom: '8px'
-                  }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '8px'
+                    }}
+                  >
                     Background Color / 背景色
                   </label>
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(8, 1fr)', 
-                    gap: '4px',
-                    marginBottom: '8px'
-                  }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(8, 1fr)',
+                      gap: '4px',
+                      marginBottom: '8px'
+                    }}
+                  >
                     {colorPalette.map(color => (
                       <button
                         key={color}
@@ -431,7 +481,8 @@ export default function FanConfigurator() {
                           width: '24px',
                           height: '24px',
                           backgroundColor: color,
-                          border: frontBgColor === color ? '2px solid #000000' : '1px solid #dddddd',
+                          border:
+                            frontBgColor === color ? '2px solid #000000' : '1px solid #dddddd',
                           cursor: 'pointer',
                           padding: 0
                         }}
@@ -442,18 +493,20 @@ export default function FanConfigurator() {
                   <input
                     type="color"
                     value={frontBgColor}
-                    onChange={(e) => setFrontBackgroundColor(e.target.value)}
+                    onChange={e => setFrontBackgroundColor(e.target.value)}
                     style={{ width: '100%', height: '32px', cursor: 'pointer' }}
                   />
                 </div>
 
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    marginBottom: '8px'
-                  }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '8px'
+                    }}
+                  >
                     Overlay Image / 重ねる絵
                   </label>
                   <input
@@ -482,39 +535,47 @@ export default function FanConfigurator() {
                   </label>
                 </div>
 
-                <div style={{
-                  width: '100%',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  backgroundColor: '#ffffff',
-                  marginBottom: '12px'
-                }}>
+                <div
+                  style={{
+                    width: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    backgroundColor: '#ffffff',
+                    marginBottom: '12px'
+                  }}
+                >
                   <div style={{ paddingBottom: '100%' }}></div>
-                  <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
                     {currentBaseImage || currentFrontOverlayImage ? (
-                      <div style={{
-                        position: 'relative',
-                        width: '100%',
-                        height: '100%'
-                      }}>
-                        <div style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
+                      <div
+                        style={{
+                          position: 'relative',
                           width: '100%',
-                          height: '100%',
-                          backgroundColor: frontBgColor,
-                          zIndex: 0
-                        }}></div>
+                          height: '100%'
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: frontBgColor,
+                            zIndex: 0
+                          }}
+                        ></div>
                         {currentFrontOverlayImage && (
                           <img
                             src={currentFrontOverlayImage}
@@ -548,7 +609,13 @@ export default function FanConfigurator() {
                         )}
                       </div>
                     ) : (
-                      <div style={{ textAlign: 'center', color: '#999999', fontSize: '11px' }}>
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          color: '#999999',
+                          fontSize: '11px'
+                        }}
+                      >
                         <Upload size={24} style={{ margin: '0 auto 8px' }} />
                         <p>Upload Image</p>
                       </div>
@@ -558,12 +625,24 @@ export default function FanConfigurator() {
 
                 {currentFrontOverlayImage && (
                   <div style={{ backgroundColor: '#ffffff', padding: '12px' }}>
-                    <p style={{ fontSize: '12px', fontWeight: '600', marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        marginBottom: '12px'
+                      }}
+                    >
                       Adjust / 調整
                     </p>
-                    
+
                     <div style={{ marginBottom: '12px' }}>
-                      <label style={{ display: 'block', fontSize: '10px', marginBottom: '4px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '10px',
+                          marginBottom: '4px'
+                        }}
+                      >
                         Size / サイズ: {frontSettings.scale}%
                       </label>
                       <input
@@ -571,13 +650,21 @@ export default function FanConfigurator() {
                         min="10"
                         max="100"
                         value={frontSettings.scale}
-                        onChange={(e) => updateFrontOverlaySetting('scale', parseInt(e.target.value))}
+                        onChange={e =>
+                          updateFrontOverlaySetting('scale', parseInt(e.target.value, 10))
+                        }
                         style={{ width: '100%' }}
                       />
                     </div>
 
                     <div style={{ marginBottom: '12px' }}>
-                      <label style={{ display: 'block', fontSize: '10px', marginBottom: '4px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '10px',
+                          marginBottom: '4px'
+                        }}
+                      >
                         X Position / 横位置: {frontSettings.x}%
                       </label>
                       <input
@@ -585,13 +672,21 @@ export default function FanConfigurator() {
                         min="0"
                         max="100"
                         value={frontSettings.x}
-                        onChange={(e) => updateFrontOverlaySetting('x', parseInt(e.target.value))}
+                        onChange={e =>
+                          updateFrontOverlaySetting('x', parseInt(e.target.value, 10))
+                        }
                         style={{ width: '100%' }}
                       />
                     </div>
 
                     <div style={{ marginBottom: '12px' }}>
-                      <label style={{ display: 'block', fontSize: '10px', marginBottom: '4px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '10px',
+                          marginBottom: '4px'
+                        }}
+                      >
                         Y Position / 縦位置: {frontSettings.y}%
                       </label>
                       <input
@@ -599,7 +694,9 @@ export default function FanConfigurator() {
                         min="0"
                         max="100"
                         value={frontSettings.y}
-                        onChange={(e) => updateFrontOverlaySetting('y', parseInt(e.target.value))}
+                        onChange={e =>
+                          updateFrontOverlaySetting('y', parseInt(e.target.value, 10))
+                        }
                         style={{ width: '100%' }}
                       />
                     </div>
@@ -630,22 +727,26 @@ export default function FanConfigurator() {
                 <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '12px' }}>
                   Back / 裏面
                 </h3>
-                
+
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    marginBottom: '8px'
-                  }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '8px'
+                    }}
+                  >
                     Background Color / 背景色
                   </label>
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(8, 1fr)', 
-                    gap: '4px',
-                    marginBottom: '8px'
-                  }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(8, 1fr)',
+                      gap: '4px',
+                      marginBottom: '8px'
+                    }}
+                  >
                     {colorPalette.map(color => (
                       <button
                         key={color}
@@ -654,7 +755,8 @@ export default function FanConfigurator() {
                           width: '24px',
                           height: '24px',
                           backgroundColor: color,
-                          border: backBgColor === color ? '2px solid #000000' : '1px solid #dddddd',
+                          border:
+                            backBgColor === color ? '2px solid #000000' : '1px solid #dddddd',
                           cursor: 'pointer',
                           padding: 0
                         }}
@@ -665,18 +767,20 @@ export default function FanConfigurator() {
                   <input
                     type="color"
                     value={backBgColor}
-                    onChange={(e) => setBackBackgroundColor(e.target.value)}
+                    onChange={e => setBackBackgroundColor(e.target.value)}
                     style={{ width: '100%', height: '32px', cursor: 'pointer' }}
                   />
                 </div>
 
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    marginBottom: '8px'
-                  }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      marginBottom: '8px'
+                    }}
+                  >
                     Overlay Image / 重ねる絵
                   </label>
                   <input
@@ -705,39 +809,47 @@ export default function FanConfigurator() {
                   </label>
                 </div>
 
-                <div style={{
-                  width: '100%',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  backgroundColor: '#ffffff',
-                  marginBottom: '12px'
-                }}>
+                <div
+                  style={{
+                    width: '100%',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    backgroundColor: '#ffffff',
+                    marginBottom: '12px'
+                  }}
+                >
                   <div style={{ paddingBottom: '100%' }}></div>
-                  <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
                     {currentBaseImage || currentBackOverlayImage ? (
-                      <div style={{
-                        position: 'relative',
-                        width: '100%',
-                        height: '100%'
-                      }}>
-                        <div style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
+                      <div
+                        style={{
+                          position: 'relative',
                           width: '100%',
-                          height: '100%',
-                          backgroundColor: backBgColor,
-                          zIndex: 0
-                        }}></div>
+                          height: '100%'
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: backBgColor,
+                            zIndex: 0
+                          }}
+                        ></div>
                         {currentBackOverlayImage && (
                           <img
                             src={currentBackOverlayImage}
@@ -771,7 +883,13 @@ export default function FanConfigurator() {
                         )}
                       </div>
                     ) : (
-                      <div style={{ textAlign: 'center', color: '#999999', fontSize: '11px' }}>
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          color: '#999999',
+                          fontSize: '11px'
+                        }}
+                      >
                         <Upload size={24} style={{ margin: '0 auto 8px' }} />
                         <p>Upload Image</p>
                       </div>
@@ -781,12 +899,24 @@ export default function FanConfigurator() {
 
                 {currentBackOverlayImage && (
                   <div style={{ backgroundColor: '#ffffff', padding: '12px' }}>
-                    <p style={{ fontSize: '12px', fontWeight: '600', marginBottom: '12px' }}>
+                    <p
+                      style={{
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        marginBottom: '12px'
+                      }}
+                    >
                       Adjust / 調整
                     </p>
-                    
+
                     <div style={{ marginBottom: '12px' }}>
-                      <label style={{ display: 'block', fontSize: '10px', marginBottom: '4px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '10px',
+                          marginBottom: '4px'
+                        }}
+                      >
                         Size / サイズ: {backSettings.scale}%
                       </label>
                       <input
@@ -794,13 +924,21 @@ export default function FanConfigurator() {
                         min="10"
                         max="100"
                         value={backSettings.scale}
-                        onChange={(e) => updateBackOverlaySetting('scale', parseInt(e.target.value))}
+                        onChange={e =>
+                          updateBackOverlaySetting('scale', parseInt(e.target.value, 10))
+                        }
                         style={{ width: '100%' }}
                       />
                     </div>
 
                     <div style={{ marginBottom: '12px' }}>
-                      <label style={{ display: 'block', fontSize: '10px', marginBottom: '4px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '10px',
+                          marginBottom: '4px'
+                        }}
+                      >
                         X Position / 横位置: {backSettings.x}%
                       </label>
                       <input
@@ -808,13 +946,21 @@ export default function FanConfigurator() {
                         min="0"
                         max="100"
                         value={backSettings.x}
-                        onChange={(e) => updateBackOverlaySetting('x', parseInt(e.target.value))}
+                        onChange={e =>
+                          updateBackOverlaySetting('x', parseInt(e.target.value, 10))
+                        }
                         style={{ width: '100%' }}
                       />
                     </div>
 
                     <div style={{ marginBottom: '12px' }}>
-                      <label style={{ display: 'block', fontSize: '10px', marginBottom: '4px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '10px',
+                          marginBottom: '4px'
+                        }}
+                      >
                         Y Position / 縦位置: {backSettings.y}%
                       </label>
                       <input
@@ -822,7 +968,9 @@ export default function FanConfigurator() {
                         min="0"
                         max="100"
                         value={backSettings.y}
-                        onChange={(e) => updateBackOverlaySetting('y', parseInt(e.target.value))}
+                        onChange={e =>
+                          updateBackOverlaySetting('y', parseInt(e.target.value, 10))
+                        }
                         style={{ width: '100%' }}
                       />
                     </div>
@@ -849,12 +997,14 @@ export default function FanConfigurator() {
               </div>
             </div>
 
-            <div style={{
-              marginTop: '16px',
-              padding: '12px',
-              backgroundColor: '#ffffff',
-              fontSize: '12px'
-            }}>
+            <div
+              style={{
+                marginTop: '16px',
+                padding: '12px',
+                backgroundColor: '#ffffff',
+                fontSize: '12px'
+              }}
+            >
               <h3 style={{ fontWeight: '600', marginBottom: '8px', fontSize: '13px' }}>
                 Current Selection / 選択中
               </h3>
