@@ -29,15 +29,15 @@ export default function FanConfigurator() {
   ];
 
   const colors = ['白 (White)', '黒 (Black)', '唐木 (Karaki)'];
-  const printMethodOptions = [
-    'Full Color (Single Side) / フルカラー(片面)',
-    'Full Color (Double Side) / フルカラー(両面)',
-    'Color Pull / 色引き(片面)',
-    'Color Pull (Double Side) / 色引き(両面)',
-    'Pearl Pull (Single Side) / パール引き(片面)',
-    'Pearl Pull (Double Side) / パール引き(両面)',
-    'Silk Screen / シルクスクリーン'
-  ];
+ const printMethodOptions = [
+  'Full Color (Single Side) / フルカラー(片面)',
+  'Full Color (Double Side) / フルカラー(両面)',
+  'Color Pull (Single Side) / 色引き(片面)',
+  'Color Pull (Double Side) / 色引き(両面)',
+  'Pearl Pull (Single Side) / パール引き(片面)',
+  'Pearl Pull (Double Side) / パール引き(両面)',
+  'Silk Screen / シルクスクリーン'
+];
   const boxOptions = ['有 (Yes)', '無 (No)', 'カスタマイズ（有料）(Custom - Paid)'];
   const bagOptions = ['有 (Yes)', '無 (No)', 'カスタマイズ（有料）(Custom - Paid)'];
   const nameOptions = ['有 (Yes)', '無 (No)'];
