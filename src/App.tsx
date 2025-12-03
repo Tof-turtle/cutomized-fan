@@ -30,12 +30,12 @@ export default function FanConfigurator() {
 
   const colors = ['白 (White)', '黒 (Black)', '唐木 (Karaki)'];
  const printMethodOptions = [
-  'Full Color (Single Side) / フルカラー(片面)',
-  'Full Color (Double Side) / フルカラー(両面)',
-  'Color Pull (Single Side) / 色引き(片面)',
-  'Color Pull (Double Side) / 色引き(両面)',
-  'Pearl Pull (Single Side) / パール引き(片面)',
-  'Pearl Pull (Double Side) / パール引き(両面)',
+  'Full Color (Single Side)/片面フルカラー',
+  'Full Color (Double Side)/両面フルカラー',
+  'Fill Color (Single Side)/片面色引き',
+  'Fill Color (Double Side)/両面色引き',
+  'Pearl (Single Side)/片面パール引き',
+  'Pearl (Double Side)/両面パール引き',
   'Silk Screen / シルクスクリーン'
 ];
   const boxOptions = ['有 (Yes)', '無 (No)', 'カスタマイズ（有料）(Custom - Paid)'];
@@ -59,6 +59,7 @@ export default function FanConfigurator() {
   const [isFrontAdjustOpen, setIsFrontAdjustOpen] = useState<boolean>(true);
   const [isBackAdjustOpen, setIsBackAdjustOpen] = useState<boolean>(true);
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState<boolean>(true);
+  const [isPrintMethodOpen, setIsPrintMethodOpen] = useState<boolean>(true);
   
   const [baseImages, setBaseImages] = useState<ImageMap>({});
   const [frontOverlayImages, setFrontOverlayImages] = useState<ImageMap>({});
@@ -330,18 +331,12 @@ export default function FanConfigurator() {
           </h1>
         </div>
 
-        <div style={{
+        <div className="main-layout" style={{
           display: 'grid',
           gridTemplateColumns: '1fr',
           gap: '24px'
         }}>
           {/* 左側：設定パネル */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '16px',
-         
-          }}>
             <div style={{ backgroundColor: '#f5f5f5', padding: '24px' }}>
               {/* 開閉ボタン */}
               <button
@@ -369,83 +364,99 @@ export default function FanConfigurator() {
                 <>
                   {/* Print Method */}
                   <div style={{ marginBottom: '24px' }}>
-                    <label style={{
-                      display: 'block',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      marginBottom: '12px',
-                      letterSpacing: '0.05em'
-                    }}>
-                      Print Method / 印刷方法
-                    </label>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
-                      {printMethodOptions.map(method => (
-                        <button
-                          key={method}
-                          onClick={() => togglePrintMethod(method)}
-                          style={{
-                            padding: '8px 12px',
-                            border: 'none',
-                            backgroundColor: printMethods.includes(method) ? '#000000' : '#ffffff',
-                            color: printMethods.includes(method) ? '#ffffff' : '#000000',
-                            cursor: 'pointer',
-                            fontSize: '13px',
-                            fontWeight: printMethods.includes(method) ? '600' : '400',
-                            textAlign: 'left',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                          }}
-                        >
-                          <span style={{ 
-                            display: 'inline-block',
-                            width: '16px',
-                            height: '16px',
-                            border: '2px solid ' + (printMethods.includes(method) ? '#ffffff' : '#000000'),
-                            backgroundColor: printMethods.includes(method) ? '#ffffff' : 'transparent',
-                            position: 'relative'
-                          }}>
-                            {printMethods.includes(method) && (
-                              <span style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                color: '#000000',
-                                fontSize: '12px',
-                                fontWeight: 'bold'
-                              }}>✓</span>
-                            )}
-                          </span>
-                          {method}
-                        </button>
-                      ))}
-                    </div>
+                    <button
+                      onClick={() => setIsPrintMethodOpen(!isPrintMethodOpen)}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px',
+                        marginBottom: '12px',
+                        border: 'none',
+                        backgroundColor: '#ffffff',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        letterSpacing: '0.05em'
+                      }}
+                    >
+                      <span>Print Method / 印刷方法</span>
+                      <span style={{ fontSize: '18px' }}>{isPrintMethodOpen ? '▼' : '▶'}</span>
+                    </button>
 
-                    {/* シルクスクリーン色数入力 */}
-                    {printMethods.some(m => m.includes('Silk Screen')) && (
-                      <div style={{ marginTop: '12px' }}>
-                        <label style={{
-                          display: 'block',
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          marginBottom: '8px'
-                        }}>
-                          Number of Colors / 色数
-                        </label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={silkScreenColors}
-                          onChange={(e) => setSilkScreenColors(Math.max(0, parseInt(e.target.value) || 0))}
-                          style={{
-                            width: '100%',
-                            padding: '8px 12px',
-                            border: '1px solid #dddddd',
-                            fontSize: '13px'
-                          }}
-                        />
-                      </div>
+                    {isPrintMethodOpen && (
+                      <>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
+                          {printMethodOptions.map(method => (
+                            <button
+                              key={method}
+                              onClick={() => togglePrintMethod(method)}
+                              style={{
+                                padding: '8px 12px',
+                                border: 'none',
+                                backgroundColor: printMethods.includes(method) ? '#000000' : '#ffffff',
+                                color: printMethods.includes(method) ? '#ffffff' : '#000000',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: printMethods.includes(method) ? '600' : '400',
+                                textAlign: 'left',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                              }}
+                            >
+                              <span style={{ 
+                                display: 'inline-block',
+                                width: '16px',
+                                height: '16px',
+                                border: '2px solid ' + (printMethods.includes(method) ? '#ffffff' : '#000000'),
+                                backgroundColor: printMethods.includes(method) ? '#ffffff' : 'transparent',
+                                position: 'relative'
+                              }}>
+                                {printMethods.includes(method) && (
+                                  <span style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    color: '#000000',
+                                    fontSize: '12px',
+                                    fontWeight: 'bold'
+                                  }}>✓</span>
+                                )}
+                              </span>
+                              {method}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* シルクスクリーン色数入力 */}
+                        {printMethods.some(m => m.includes('Silk Screen')) && (
+                          <div style={{ marginTop: '12px' }}>
+                            <label style={{
+                              display: 'block',
+                              fontSize: '13px',
+                              fontWeight: '600',
+                              marginBottom: '8px'
+                            }}>
+                              Number of Colors / 色数
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={silkScreenColors}
+                              onChange={(e) => setSilkScreenColors(Math.max(0, parseInt(e.target.value) || 0))}
+                              style={{
+                                width: '100%',
+                                padding: '8px 12px',
+                                border: '1px solid #dddddd',
+                                fontSize: '13px'
+                              }}
+                            />
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
 
@@ -460,25 +471,24 @@ export default function FanConfigurator() {
                     }}>
                       Size / サイズ
                     </label>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <select
+                      value={selectedSize}
+                      onChange={(e) => setSelectedSize(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        border: '1px solid #dddddd',
+                        fontSize: '13px',
+                        backgroundColor: '#ffffff',
+                        cursor: 'pointer'
+                      }}
+                    >
                       {sizes.map(size => (
-                        <button
-                          key={size}
-                          onClick={() => setSelectedSize(size)}
-                          style={{
-                            padding: '8px 12px',
-                            border: 'none',
-                            backgroundColor: selectedSize === size ? '#000000' : '#ffffff',
-                            color: selectedSize === size ? '#ffffff' : '#000000',
-                            cursor: 'pointer',
-                            fontSize: '13px',
-                            fontWeight: selectedSize === size ? '600' : '400'
-                          }}
-                        >
+                        <option key={size} value={size}>
                           {size}
-                        </button>
+                        </option>
                       ))}
-                    </div>
+                    </select>
                   </div>
 
                   {/* Rib Color */}
@@ -492,25 +502,24 @@ export default function FanConfigurator() {
                 }}>
                   Rib Color / 骨の色
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
+                <select
+                  value={selectedColor}
+                  onChange={(e) => setSelectedColor(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #dddddd',
+                    fontSize: '13px',
+                    backgroundColor: '#ffffff',
+                    cursor: 'pointer'
+                  }}
+                >
                   {colors.map(color => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      style={{
-                        padding: '8px 12px',
-                        border: 'none',
-                        backgroundColor: selectedColor === color ? '#000000' : '#ffffff',
-                        color: selectedColor === color ? '#ffffff' : '#000000',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        fontWeight: selectedColor === color ? '600' : '400'
-                      }}
-                    >
+                    <option key={color} value={color}>
                       {color}
-                    </button>
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
 
               {/* Quantity */}
@@ -561,28 +570,26 @@ export default function FanConfigurator() {
                     fontWeight: '600',
                     marginBottom: '8px'
                   }}>
-                    箱 / Box
+                    Box / 箱
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }}>
+                  <select
+                    value={boxOption}
+                    onChange={(e) => setBoxOption(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #dddddd',
+                      fontSize: '13px',
+                      backgroundColor: '#ffffff',
+                      cursor: 'pointer'
+                    }}
+                  >
                     {boxOptions.map(option => (
-                      <button
-                        key={option}
-                        onClick={() => setBoxOption(option)}
-                        style={{
-                          padding: '6px 10px',
-                          border: 'none',
-                          backgroundColor: boxOption === option ? '#000000' : '#ffffff',
-                          color: boxOption === option ? '#ffffff' : '#000000',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: boxOption === option ? '600' : '400',
-                          textAlign: 'left'
-                        }}
-                      >
+                      <option key={option} value={option}>
                         {option}
-                      </button>
+                      </option>
                     ))}
-                  </div>
+                  </select>
                 </div>
 
                 {/* Bag */}
@@ -593,28 +600,26 @@ export default function FanConfigurator() {
                     fontWeight: '600',
                     marginBottom: '8px'
                   }}>
-                    扇子袋 / Fan Bag
+                    Fan Bag / 扇子袋
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }}>
+                  <select
+                    value={bagOption}
+                    onChange={(e) => setBagOption(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #dddddd',
+                      fontSize: '13px',
+                      backgroundColor: '#ffffff',
+                      cursor: 'pointer'
+                    }}
+                  >
                     {bagOptions.map(option => (
-                      <button
-                        key={option}
-                        onClick={() => setBagOption(option)}
-                        style={{
-                          padding: '6px 10px',
-                          border: 'none',
-                          backgroundColor: bagOption === option ? '#000000' : '#ffffff',
-                          color: bagOption === option ? '#ffffff' : '#000000',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: bagOption === option ? '600' : '400',
-                          textAlign: 'left'
-                        }}
-                      >
+                      <option key={option} value={option}>
                         {option}
-                      </button>
+                      </option>
                     ))}
-                  </div>
+                  </select>
                 </div>
 
                 {/* Name Engraving */}
@@ -885,7 +890,7 @@ export default function FanConfigurator() {
                 />
               </div>
 
-              <div style={{
+              <div className="preview-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr',
                 gap: '32px'
@@ -1525,19 +1530,32 @@ export default function FanConfigurator() {
                 </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
 
       <style>{`
-        @media (min-width: 768px) {
-          div[style*="gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))'"] {
-            grid-template-columns: 320px 1fr !important;
+        /* モバイル: 縦一列 */
+        @media (max-width: 767px) {
+          .main-layout {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+          
+          .preview-grid {
+            grid-template-columns: 1fr !important;
           }
         }
         
-        @media (min-width: 1024px) {
-          div[style*="gridTemplateColumns: '1fr'"][style*="gap: '32px'"] > div:last-child > div:last-child {
+        /* タブレット・PC: 左1:右3、表裏横並び */
+        @media (min-width: 768px) {
+          .main-layout {
+            display: grid !important;
+            grid-template-columns: 1fr 3fr !important;
+            gap: 24px !important;
+          }
+          
+          .preview-grid {
             grid-template-columns: 1fr 1fr !important;
           }
         }
