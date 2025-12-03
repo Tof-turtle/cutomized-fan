@@ -238,6 +238,8 @@ export default function FanConfigurator() {
       };
       reader.readAsDataURL(file);
     }
+    // Reset input to allow re-uploading the same file
+    e.target.value = '';
   };
 
   const handleFrontOverlayImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -247,14 +249,18 @@ export default function FanConfigurator() {
       reader.onload = event => {
         const result = event.target?.result;
         if (typeof result === 'string') {
+          const key = getCurrentKey();
+          console.log('Front overlay uploaded for key:', key);
           setFrontOverlayImages(prev => ({
             ...prev,
-            [getCurrentKey()]: result
+            [key]: result
           }));
         }
       };
       reader.readAsDataURL(file);
     }
+    // Reset input to allow re-uploading the same file
+    e.target.value = '';
   };
 
   const handleBackOverlayImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -272,6 +278,8 @@ export default function FanConfigurator() {
       };
       reader.readAsDataURL(file);
     }
+    // Reset input to allow re-uploading the same file
+    e.target.value = '';
   };
 
   const currentBaseImage = baseImages[getCurrentKey()];
